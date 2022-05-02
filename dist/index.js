@@ -1,6 +1,152 @@
 require('./sourcemap-register.js');/******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
+/***/ 8430:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.ConfirmationStatus = void 0;
+const core = __importStar(__nccwpck_require__(2186));
+const github = __importStar(__nccwpck_require__(5438));
+const issues_1 = __nccwpck_require__(6962);
+const utils_1 = __nccwpck_require__(918);
+// eslint-disable-next-line no-shadow
+var ConfirmationStatus;
+(function (ConfirmationStatus) {
+    ConfirmationStatus["Confirmed"] = "confirmed";
+    ConfirmationStatus["Cancelled"] = "cancelled";
+    ConfirmationStatus["Timeout"] = "timeout";
+    ConfirmationStatus["Pending"] = "pending";
+})(ConfirmationStatus = exports.ConfirmationStatus || (exports.ConfirmationStatus = {}));
+const getStatusFromIssueReactions = (issues, issueNumber) => __awaiter(void 0, void 0, void 0, function* () {
+    const reactions = yield (0, issues_1.getIssueReactions)(issues, issueNumber);
+    if (reactions === null || reactions === void 0 ? void 0 : reactions['+1']) {
+        return ConfirmationStatus.Confirmed;
+    }
+    if (reactions === null || reactions === void 0 ? void 0 : reactions['-1']) {
+        return ConfirmationStatus.Cancelled;
+    }
+    return ConfirmationStatus.Pending;
+});
+const getConfirmationStatus = () => __awaiter(void 0, void 0, void 0, function* () {
+    return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
+        const token = core.getInput('githubToken');
+        const octokit = github.getOctokit(token);
+        const { rest: { issues } } = octokit;
+        const { data: { number, html_url } } = yield (0, issues_1.createIssue)(issues);
+        const interval = setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
+            const confirmationStatus = yield getStatusFromIssueReactions(issues, number);
+            (0, utils_1.logConfirmationIssueUrl)(html_url);
+            if (confirmationStatus === ConfirmationStatus.Confirmed ||
+                confirmationStatus === ConfirmationStatus.Cancelled) {
+                clearInterval(interval);
+                yield (0, issues_1.closeIssue)(issues, number);
+                resolve(confirmationStatus);
+            }
+        }), 10000);
+    }));
+});
+exports.default = getConfirmationStatus;
+
+
+/***/ }),
+
+/***/ 6962:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.closeIssue = exports.createIssue = exports.getIssueReactions = void 0;
+const core = __importStar(__nccwpck_require__(2186));
+const github = __importStar(__nccwpck_require__(5438));
+const getIssueReactions = (issues, issueNumber) => __awaiter(void 0, void 0, void 0, function* () {
+    const { context: { repo } } = github;
+    const issue = yield issues.get(Object.assign(Object.assign({}, repo), { issue_number: issueNumber }));
+    const { data: { reactions } } = issue;
+    return reactions;
+});
+exports.getIssueReactions = getIssueReactions;
+const createIssue = (issues) => {
+    const { context: { repo } } = github;
+    const { GITHUB_SHA, GITHUB_RUN_ID } = process.env;
+    const commitSha = GITHUB_SHA === null || GITHUB_SHA === void 0 ? void 0 : GITHUB_SHA.substring(0, 7);
+    return issues.create(Object.assign(Object.assign({}, repo), { title: `🌺 Confirm deployment of ${commitSha}`, body: `The confirmation step has been requested by run https://github.com/humanizmu/frontend/actions/runs/${GITHUB_RUN_ID}
+
+Related commit ${commitSha}
+
+To confirm this step react to this issue with 👍
+To cancel this step react to the issue with 👎` }));
+};
+exports.createIssue = createIssue;
+const closeIssue = (issues, number) => __awaiter(void 0, void 0, void 0, function* () {
+    const { context: { repo } } = github;
+    yield issues.update(Object.assign(Object.assign({}, repo), { issue_number: number, state: 'closed' }));
+    core.info(`Closed issue #${number}`);
+});
+exports.closeIssue = closeIssue;
+
+
+/***/ }),
+
 /***/ 3109:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
@@ -36,60 +182,56 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__nccwpck_require__(2186));
-const github = __importStar(__nccwpck_require__(5438));
-const getConfirmationStatus = (issues, issueNumber) => __awaiter(void 0, void 0, void 0, function* () {
-    const { context: { repo } } = github;
-    const issue = yield issues.get(Object.assign(Object.assign({}, repo), { issue_number: issueNumber }));
-    const { data: { reactions } } = issue;
-    if (reactions === null || reactions === void 0 ? void 0 : reactions['+1']) {
-        return 'confirmed';
-    }
-    if (reactions === null || reactions === void 0 ? void 0 : reactions['-1']) {
-        return 'cancelled';
-    }
-    return 'pending';
-});
-const closeIssue = (issues, number) => __awaiter(void 0, void 0, void 0, function* () {
-    const { context: { repo } } = github;
-    yield issues.update(Object.assign(Object.assign({}, repo), { issue_number: number, state: 'closed' }));
-    core.info(`Closed issue #${number}`);
-});
+const get_confirmation_status_1 = __importStar(__nccwpck_require__(8430));
 const run = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const token = core.getInput('githubToken');
-        const octokit = github.getOctokit(token);
-        const { context: { repo } } = github;
-        const { rest: { issues } } = octokit;
-        const { GITHUB_SHA, GITHUB_RUN_ID } = process.env;
-        const commitSha = GITHUB_SHA === null || GITHUB_SHA === void 0 ? void 0 : GITHUB_SHA.substring(0, 7);
-        const { data: { number, html_url } } = yield issues.create(Object.assign(Object.assign({}, repo), { title: `🌺 Confirm deployment of ${commitSha}`, body: `The confirmation step has been requested by run https://github.com/humanizmu/frontend/actions/runs/${GITHUB_RUN_ID}
-
-Related commit ${commitSha}
-
-To confirm this step react to this issue with 👍
-To cancel this step react to the issue with 👎` }));
-        const interval = setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
-            const confirmationStatus = yield getConfirmationStatus(issues, number);
-            core.info(`Opened issue ${html_url}`);
-            core.info(`Confirm this step by reacting to the issue with 👍`);
-            core.info('To cancel this step react to the issue with 👎');
-            if (confirmationStatus === 'confirmed') {
-                clearInterval(interval);
-                core.info('Confirmed');
-                yield closeIssue(issues, number);
-            }
-            else if (confirmationStatus === 'cancelled') {
-                yield closeIssue(issues, number);
-                core.info(`Closed issue #${number}`);
-                throw new Error('Cancelled');
-            }
-        }), 10000);
+        const confirmationStatus = yield (0, get_confirmation_status_1.default)();
+        if (confirmationStatus === get_confirmation_status_1.ConfirmationStatus.Cancelled) {
+            core.setFailed('Cancelled by user');
+        }
     }
     catch (error) {
-        core.setFailed(error.message);
+        core.setFailed('Unknown error');
     }
 });
 run();
+
+
+/***/ }),
+
+/***/ 918:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.logConfirmationIssueUrl = void 0;
+const core = __importStar(__nccwpck_require__(2186));
+const logConfirmationIssueUrl = (issueUrl) => {
+    core.info(`Opened issue ${issueUrl}`);
+    core.info(`Confirm this step by reacting to the issue with 👍`);
+    core.info('To cancel this step react to the issue with 👎');
+};
+exports.logConfirmationIssueUrl = logConfirmationIssueUrl;
 
 
 /***/ }),
