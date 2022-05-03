@@ -47,6 +47,8 @@ const getConfirmationStatus = async () => {
   } = await createIssue(issues)
 
   for (let i = 0; i < timeout / retryInterval; i++) {
+    core.info(`times to run ${timeout / retryInterval}`)
+    core.info(`iiiiiiiiiiiiiiij: ${i}`)
     await wait(retryInterval)
 
     const confirmationStatus = await getStatusFromIssueReactions(issues, number)

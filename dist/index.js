@@ -42,7 +42,7 @@ const issues_1 = __nccwpck_require__(6962);
 const utils_1 = __nccwpck_require__(918);
 const second = 1000;
 const minute = 60 * 1000;
-const timeout = 20 * minute;
+const timeout = 1 * minute;
 const retryInterval = 10 * second;
 // eslint-disable-next-line no-shadow
 var ConfirmationStatus;
@@ -69,6 +69,8 @@ const getConfirmationStatus = () => __awaiter(void 0, void 0, void 0, function* 
     const { rest: { issues } } = octokit;
     const { data: { number, html_url } } = yield (0, issues_1.createIssue)(issues);
     for (let i = 0; i < timeout / retryInterval; i++) {
+        core.info(`times to run ${timeout / retryInterval}`);
+        core.info(`iiiiiiiiiiiiiiij: ${i}`);
         yield wait(retryInterval);
         const confirmationStatus = yield getStatusFromIssueReactions(issues, number);
         (0, utils_1.logConfirmationIssueUrl)(html_url);
@@ -191,8 +193,19 @@ const get_confirmation_status_1 = __importStar(__nccwpck_require__(8430));
 const run = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const confirmationStatus = yield (0, get_confirmation_status_1.default)();
-        if (confirmationStatus === get_confirmation_status_1.ConfirmationStatus.Cancelled) {
-            core.setFailed('Cancelled by user');
+        switch (confirmationStatus) {
+            case get_confirmation_status_1.ConfirmationStatus.Confirmed: {
+                core.info('Confirmed by user');
+                break;
+            }
+            case get_confirmation_status_1.ConfirmationStatus.Cancelled: {
+                core.setFailed('Cancelled by user');
+                break;
+            }
+            case get_confirmation_status_1.ConfirmationStatus.Timeout: {
+                core.setFailed('Canceled due to timeout');
+                break;
+            }
         }
     }
     catch (error) {
