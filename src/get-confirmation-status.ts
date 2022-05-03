@@ -5,7 +5,7 @@ import {logConfirmationIssueUrl} from './utils'
 
 const second = 1000
 const minute = 60 * 1000
-const timeout = 20 * minute
+const timeout = 1 * minute
 const retryInterval = 10 * second
 
 // eslint-disable-next-line no-shadow

@@ -7,8 +7,19 @@ const run = async (): Promise<void> => {
   try {
     const confirmationStatus = await getConfirmationStatus()
 
-    if (confirmationStatus === ConfirmationStatus.Cancelled) {
-      core.setFailed('Cancelled by user')
+    switch (confirmationStatus) {
+      case ConfirmationStatus.Confirmed: {
+        core.info('Confirmed by user')
+        break
+      }
+      case ConfirmationStatus.Cancelled: {
+        core.setFailed('Cancelled by user')
+        break
+      }
+      case ConfirmationStatus.Timeout: {
+        core.setFailed('Canceled due to timeout')
+        break
+      }
     }
   } catch (error) {
     core.setFailed('Unknown error')
