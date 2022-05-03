@@ -3,6 +3,11 @@ import * as github from '@actions/github'
 import {Issues, closeIssue, createIssue, getIssueReactions} from './issues'
 import {logConfirmationIssueUrl} from './utils'
 
+const second = 1000
+const minute = 60 * 1000
+const timeout = 20 * minute
+const retryInterval = 10 * second
+
 // eslint-disable-next-line no-shadow
 export enum ConfirmationStatus {
   Confirmed = 'confirmed',
@@ -28,37 +33,39 @@ const getStatusFromIssueReactions = async (
   return ConfirmationStatus.Pending
 }
 
-const getConfirmationStatus = async () =>
-  new Promise(async resolve => {
-    const token = core.getInput('githubToken')
-    const octokit = github.getOctokit(token)
-    const {
-      rest: {issues}
-    } = octokit
+const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
-    const {
-      data: {number, html_url}
-    } = await createIssue(issues)
+const getConfirmationStatus = async () => {
+  const token = core.getInput('githubToken')
+  const octokit = github.getOctokit(token)
+  const {
+    rest: {issues}
+  } = octokit
 
-    const interval = setInterval(async () => {
-      const confirmationStatus = await getStatusFromIssueReactions(
-        issues,
-        number
-      )
+  const {
+    data: {number, html_url}
+  } = await createIssue(issues)
 
-      logConfirmationIssueUrl(html_url)
+  for (let i = 0; i < timeout / retryInterval; i++) {
+    await wait(retryInterval)
 
-      if (
-        confirmationStatus === ConfirmationStatus.Confirmed ||
-        confirmationStatus === ConfirmationStatus.Cancelled
-      ) {
-        clearInterval(interval)
+    const confirmationStatus = await getStatusFromIssueReactions(issues, number)
 
-        await closeIssue(issues, number)
+    logConfirmationIssueUrl(html_url)
 
-        resolve(confirmationStatus)
-      }
-    }, 10000)
-  })
+    if (
+      confirmationStatus === ConfirmationStatus.Confirmed ||
+      confirmationStatus === ConfirmationStatus.Cancelled
+    ) {
+      await closeIssue(issues, number)
+
+      return confirmationStatus
+    }
+  }
+
+  await closeIssue(issues, number)
+
+  return ConfirmationStatus.Timeout
+}
 
 export default getConfirmationStatus

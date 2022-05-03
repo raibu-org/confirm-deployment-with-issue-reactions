@@ -40,6 +40,10 @@ const core = __importStar(__nccwpck_require__(2186));
 const github = __importStar(__nccwpck_require__(5438));
 const issues_1 = __nccwpck_require__(6962);
 const utils_1 = __nccwpck_require__(918);
+const second = 1000;
+const minute = 60 * 1000;
+const timeout = 20 * minute;
+const retryInterval = 10 * second;
 // eslint-disable-next-line no-shadow
 var ConfirmationStatus;
 (function (ConfirmationStatus) {
@@ -58,23 +62,24 @@ const getStatusFromIssueReactions = (issues, issueNumber) => __awaiter(void 0, v
     }
     return ConfirmationStatus.Pending;
 });
+const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 const getConfirmationStatus = () => __awaiter(void 0, void 0, void 0, function* () {
-    return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
-        const token = core.getInput('githubToken');
-        const octokit = github.getOctokit(token);
-        const { rest: { issues } } = octokit;
-        const { data: { number, html_url } } = yield (0, issues_1.createIssue)(issues);
-        const interval = setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
-            const confirmationStatus = yield getStatusFromIssueReactions(issues, number);
-            (0, utils_1.logConfirmationIssueUrl)(html_url);
-            if (confirmationStatus === ConfirmationStatus.Confirmed ||
-                confirmationStatus === ConfirmationStatus.Cancelled) {
-                clearInterval(interval);
-                yield (0, issues_1.closeIssue)(issues, number);
-                resolve(confirmationStatus);
-            }
-        }), 10000);
-    }));
+    const token = core.getInput('githubToken');
+    const octokit = github.getOctokit(token);
+    const { rest: { issues } } = octokit;
+    const { data: { number, html_url } } = yield (0, issues_1.createIssue)(issues);
+    for (let i = 0; i < timeout / retryInterval; i++) {
+        yield wait(retryInterval);
+        const confirmationStatus = yield getStatusFromIssueReactions(issues, number);
+        (0, utils_1.logConfirmationIssueUrl)(html_url);
+        if (confirmationStatus === ConfirmationStatus.Confirmed ||
+            confirmationStatus === ConfirmationStatus.Cancelled) {
+            yield (0, issues_1.closeIssue)(issues, number);
+            return confirmationStatus;
+        }
+    }
+    yield (0, issues_1.closeIssue)(issues, number);
+    return ConfirmationStatus.Timeout;
 });
 exports.default = getConfirmationStatus;
 
