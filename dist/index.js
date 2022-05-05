@@ -41,7 +41,7 @@ const github = __importStar(__nccwpck_require__(5438));
 const issues_1 = __nccwpck_require__(6962);
 const utils_1 = __nccwpck_require__(918);
 const second = 1000;
-const minute = 60 * 1000;
+const minute = 20 * 60 * 1000;
 const timeout = 1 * minute;
 const retryInterval = 10 * second;
 // eslint-disable-next-line no-shadow
@@ -129,11 +129,11 @@ const getIssueReactions = (issues, issueNumber) => __awaiter(void 0, void 0, voi
 });
 exports.getIssueReactions = getIssueReactions;
 const createIssue = (issues) => {
+    var _a;
     const { GITHUB_SHA, GITHUB_RUN_ID } = process.env;
     const commitSha = GITHUB_SHA === null || GITHUB_SHA === void 0 ? void 0 : GITHUB_SHA.substring(0, 7);
-    console.log(github.context);
-    console.log('', github.context.repo);
-    return issues.create(Object.assign(Object.assign({}, github.context.repo), { title: `🌺 Confirm deployment of ${commitSha}`, body: `The confirmation step has been requested by run https://github.com/humanizmu/frontend/actions/runs/${GITHUB_RUN_ID}
+    const runUrl = `${(_a = github.context.payload.repository) === null || _a === void 0 ? void 0 : _a.url}/actions/runs/${GITHUB_RUN_ID}`;
+    return issues.create(Object.assign(Object.assign({}, github.context.repo), { title: `🌺 Confirm deployment of ${commitSha}`, body: `The confirmation step has been requested by run ${runUrl}
 
 Related commit ${commitSha}
 

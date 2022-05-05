@@ -4,7 +4,7 @@ import {Issues, closeIssue, createIssue, getIssueReactions} from './issues'
 import {logConfirmationIssueUrl} from './utils'
 
 const second = 1000
-const minute = 60 * 1000
+const minute = 20 * 60 * 1000
 const timeout = 1 * minute
 const retryInterval = 10 * second
 

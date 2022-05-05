@@ -21,13 +21,12 @@ export const createIssue = (issues: Issues) => {
   const {GITHUB_SHA, GITHUB_RUN_ID} = process.env
   const commitSha = GITHUB_SHA?.substring(0, 7)
 
-  console.log(github.context)
-  console.log('', github.context.repo)
+  const runUrl = `${github.context.payload.repository?.url}/actions/runs/${GITHUB_RUN_ID}`
 
   return issues.create({
     ...github.context.repo,
     title: `🌺 Confirm deployment of ${commitSha}`,
-    body: `The confirmation step has been requested by run https://github.com/humanizmu/frontend/actions/runs/${GITHUB_RUN_ID}
+    body: `The confirmation step has been requested by run ${runUrl}
 
 Related commit ${commitSha}
 
