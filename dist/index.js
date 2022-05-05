@@ -69,8 +69,6 @@ const getConfirmationStatus = () => __awaiter(void 0, void 0, void 0, function* 
     const { rest: { issues } } = octokit;
     const { data: { number, html_url } } = yield (0, issues_1.createIssue)(issues);
     for (let i = 0; i < timeout / retryInterval; i++) {
-        core.info(`times to run ${timeout / retryInterval}`);
-        core.info(`iiiiiiiiiiiiiiij: ${i}`);
         yield wait(retryInterval);
         const confirmationStatus = yield getStatusFromIssueReactions(issues, number);
         (0, utils_1.logConfirmationIssueUrl)(html_url);
@@ -126,17 +124,16 @@ exports.closeIssue = exports.createIssue = exports.getIssueReactions = void 0;
 const core = __importStar(__nccwpck_require__(2186));
 const github = __importStar(__nccwpck_require__(5438));
 const getIssueReactions = (issues, issueNumber) => __awaiter(void 0, void 0, void 0, function* () {
-    const { context: { repo } } = github;
-    const issue = yield issues.get(Object.assign(Object.assign({}, repo), { issue_number: issueNumber }));
-    const { data: { reactions } } = issue;
-    return reactions;
+    const issue = yield issues.get(Object.assign(Object.assign({}, github.context.repo), { issue_number: issueNumber }));
+    return issue.data.reactions;
 });
 exports.getIssueReactions = getIssueReactions;
 const createIssue = (issues) => {
-    const { context: { repo } } = github;
     const { GITHUB_SHA, GITHUB_RUN_ID } = process.env;
     const commitSha = GITHUB_SHA === null || GITHUB_SHA === void 0 ? void 0 : GITHUB_SHA.substring(0, 7);
-    return issues.create(Object.assign(Object.assign({}, repo), { title: `🌺 Confirm deployment of ${commitSha}`, body: `The confirmation step has been requested by run https://github.com/humanizmu/frontend/actions/runs/${GITHUB_RUN_ID}
+    console.log(github.context);
+    console.log('', github.context.repo);
+    return issues.create(Object.assign(Object.assign({}, github.context.repo), { title: `🌺 Confirm deployment of ${commitSha}`, body: `The confirmation step has been requested by run https://github.com/humanizmu/frontend/actions/runs/${GITHUB_RUN_ID}
 
 Related commit ${commitSha}
 
@@ -145,8 +142,7 @@ To cancel this step react to the issue with 👎` }));
 };
 exports.createIssue = createIssue;
 const closeIssue = (issues, number) => __awaiter(void 0, void 0, void 0, function* () {
-    const { context: { repo } } = github;
-    yield issues.update(Object.assign(Object.assign({}, repo), { issue_number: number, state: 'closed' }));
+    yield issues.update(Object.assign(Object.assign({}, github.context.repo), { issue_number: number, state: 'closed' }));
     core.info(`Closed issue #${number}`);
 });
 exports.closeIssue = closeIssue;
@@ -188,6 +184,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.run = void 0;
 const core = __importStar(__nccwpck_require__(2186));
 const get_confirmation_status_1 = __importStar(__nccwpck_require__(8430));
 const run = () => __awaiter(void 0, void 0, void 0, function* () {
@@ -212,7 +209,8 @@ const run = () => __awaiter(void 0, void 0, void 0, function* () {
         core.setFailed('Unknown error');
     }
 });
-run();
+exports.run = run;
+(0, exports.run)();
 
 
 /***/ }),

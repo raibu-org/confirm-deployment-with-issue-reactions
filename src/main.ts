@@ -3,7 +3,7 @@ import getConfirmationStatus, {
   ConfirmationStatus
 } from './get-confirmation-status'
 
-const run = async (): Promise<void> => {
+export const run = async (): Promise<void> => {
   try {
     const confirmationStatus = await getConfirmationStatus()
 
