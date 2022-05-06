@@ -8,19 +8,11 @@ const coreInfoMock = castToMock(core.info)
 describe('utils', () => {
   describe('logConfirmationIssueUrl()', () => {
     beforeEach(() => {
-      logConfirmationIssueUrl('http://putin-huilo.fuck')
+      logConfirmationIssueUrl('http://putin.huilo')
     })
 
     it('logs issue url and explanation messages correctly', () => {
-      expect(coreInfoMock).toBeCalledWith(
-        'Opened issue http://putin-huilo.fuck'
-      )
-      expect(coreInfoMock).toBeCalledWith(
-        'Confirm this step by reacting to the issue with 👍'
-      )
-      expect(coreInfoMock).toBeCalledWith(
-        'To cancel this step react to the issue with 👎'
-      )
+      expect(coreInfoMock.mock.calls).toMatchSnapshot()
     })
   })
 })

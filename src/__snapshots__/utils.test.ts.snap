@@ -1,0 +1,15 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`utils logConfirmationIssueUrl() logs issue url and explanation messages correctly 1`] = `
+Array [
+  Array [
+    "Opened issue http://putin.huilo",
+  ],
+  Array [
+    "Confirm this step by reacting to the issue with 👍",
+  ],
+  Array [
+    "To cancel this step react to the issue with 👎",
+  ],
+]
+`;
