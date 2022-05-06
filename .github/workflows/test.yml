@@ -15,7 +15,7 @@ jobs:
   test: # make sure the action works on a clean machine without building
     timeout-minutes: 2
     runs-on: ubuntu-latest
-    # if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v2
       - uses: ./
