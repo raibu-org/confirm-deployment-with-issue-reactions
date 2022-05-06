@@ -41,8 +41,8 @@ const github = __importStar(__nccwpck_require__(5438));
 const issues_1 = __nccwpck_require__(6962);
 const utils_1 = __nccwpck_require__(918);
 const second = 1000;
-const minute = 20 * 60 * 1000;
-const timeout = 1 * minute;
+const minute = 60 * 1000;
+const timeout = 20 * minute;
 const retryInterval = 10 * second;
 // eslint-disable-next-line no-shadow
 var ConfirmationStatus;
