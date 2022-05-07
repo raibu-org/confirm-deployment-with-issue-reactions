@@ -26,7 +26,7 @@ describe('getConfirmationStatus()', () => {
 
     jest.spyOn(global, 'setTimeout').mockImplementation(fn => {
       fn()
-      return setTimeout(() => {})
+      return undefined as unknown as NodeJS.Timeout
     })
   })
 
@@ -92,12 +92,17 @@ describe('getConfirmationStatus()', () => {
       result = await getConfirmationStatus()
     })
 
-    it('returns correct timeout confirmation status', () => {
+    it('returns timeout confirmation status', () => {
       expect(result).toBe(ConfirmationStatus.Timeout)
     })
 
-    it('retries to poll the issue correct number of times', () => {
+    it('polls issue reactions correct number of times', () => {
       expect(getIssueReactionsMock).toBeCalledTimes(120)
+    })
+
+    it('waits for 10 seconds on each retry', () => {
+      expect(global.setTimeout).toBeCalledWith(expect.any(Function), 10000)
+      expect(global.setTimeout).toBeCalledTimes(120)
     })
 
     it('closes the issue', () => {
@@ -122,7 +127,7 @@ describe('getConfirmationStatus()', () => {
       error = undefined
     })
 
-    it('tries to poll issue reactions', () => {
+    it('throws an error', () => {
       expect(error).toBeDefined()
     })
 
