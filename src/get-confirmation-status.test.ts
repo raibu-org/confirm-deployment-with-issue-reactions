@@ -61,7 +61,7 @@ describe('getConfirmationStatus()', () => {
   describe.each`
     description | reactions      | expectedStatus
     ${'👍'}     | ${{['+1']: 1}} | ${ConfirmationStatus.Confirmed}
-    ${'👎'}     | ${{['-1']: 1}} | ${ConfirmationStatus.Cancelled}
+    ${'👎'}     | ${{['-1']: 1}} | ${ConfirmationStatus.Canceled}
   `(
     'when issue reactions contain $description',
     ({reactions, expectedStatus}) => {

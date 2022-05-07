@@ -1,6 +1,6 @@
 name: 'Deploy with issue reactions'
 description: 'Action to create a deployment confirmation step'
-author: 'kujiraOo'
+author: 'humanizmu'
 inputs:
   githubToken:
     description: 'Github token'

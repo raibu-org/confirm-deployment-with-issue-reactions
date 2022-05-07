@@ -1,6 +1,6 @@
 # Confirm deployment with issue reactions
 
-This actions allow to create a deployment confirmation job in CI. The job will create a new issue in the repository where the action runs. You can react to the issue with either 👍 or 👎 to confirm or cancel the deployment confirmation job. 
+This action allows to create a deployment confirmation job in CI. The job will create a new issue in the repository where the action runs. You can react to the issue with either 👍 or 👎 to confirm or cancel the deployment confirmation job.
 
 Usage example:
 
@@ -19,11 +19,11 @@ Usage example:
     - run: 'echo putin huilo'
 ```
 
-The example above will creates two jobs
-- confirm-dummy-deployment - job that needs to be confirmed by reacting to the issue opened by the job
-- dummy-deployment - job depending on the confirmation job
+The example above will create two jobs
+- `confirm-dummy-deployment` - job that needs to be confirmed by reacting to the issue opened by the job
+- `dummy-deployment` - job depending on the confirmation job
 
-The run containing these jobs will look as following:
+The run containing these jobs will look as following
 
 ![Alt text](/docs/screenshots/pending-ci.png "Pending CI")
 
@@ -37,7 +37,7 @@ The issue itself will look like this
 
 ![Alt text](/docs/screenshots/open-issue.png "Open issue")
 
-You confirm the deployment by reacting to the issue with 👍. Upon confirmation the issue will be closed automatically.
+You can confirm the deployment by reacting to the issue with 👍. Upon confirmation, the issue will be closed automatically.
 
 ![Alt text](/docs/screenshots/confirmed-issue.png "Confirmed issue")
 
@@ -45,12 +45,12 @@ The confirmation job will pass and the dependent deployment step will be trigger
 
 ![Alt text](/docs/screenshots/passing-ci.png "Passing CI")
 
-## Cancelling the deployment
+## Canceling the deployment
 
 You can react to the issue with 👎. Upon cancellation the issue will be closed automatically.
 
-![Alt text](/docs/screenshots/cancelled-issue.png "Cancelled issue")
+![Alt text](/docs/screenshots/canceled-issue.png "Canceled issue")
 
 The confirmation job will fail and the dependent deployment step will be skipped
 
-![Alt text](/docs/screenshots/cancelled-ci.png "Cancelled CI")
+![Alt text](/docs/screenshots/canceled-ci.png "Canceled CI")

@@ -11,7 +11,7 @@ const retryInterval = 10 * second
 // eslint-disable-next-line no-shadow
 export enum ConfirmationStatus {
   Confirmed = 'confirmed',
-  Cancelled = 'cancelled',
+  Canceled = 'canceled',
   Timeout = 'timeout',
   Pending = 'pending'
 }
@@ -27,7 +27,7 @@ const getStatusFromIssueReactions = async (
   }
 
   if (reactions?.['-1']) {
-    return ConfirmationStatus.Cancelled
+    return ConfirmationStatus.Canceled
   }
 
   return ConfirmationStatus.Pending
@@ -55,7 +55,7 @@ const getConfirmationStatus = async () => {
 
     if (
       confirmationStatus === ConfirmationStatus.Confirmed ||
-      confirmationStatus === ConfirmationStatus.Cancelled
+      confirmationStatus === ConfirmationStatus.Canceled
     ) {
       await closeIssue(issues, number)
 

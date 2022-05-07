@@ -26,9 +26,9 @@ describe('main', () => {
     })
 
     describe.each`
-      confirmationStatus              | expectedErrorMessage
-      ${ConfirmationStatus.Cancelled} | ${'Cancelled by user'}
-      ${ConfirmationStatus.Timeout}   | ${'Canceled due to timeout'}
+      confirmationStatus             | expectedErrorMessage
+      ${ConfirmationStatus.Canceled} | ${'Canceled by user'}
+      ${ConfirmationStatus.Timeout}  | ${'Canceled due to timeout'}
     `(
       'when confirmation status is "$confirmationStatus"',
       ({confirmationStatus, expectedErrorMessage}) => {

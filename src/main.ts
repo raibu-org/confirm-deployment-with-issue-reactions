@@ -12,8 +12,8 @@ export const run = async (): Promise<void> => {
         core.info('Confirmed by user')
         break
       }
-      case ConfirmationStatus.Cancelled: {
-        core.setFailed('Cancelled by user')
+      case ConfirmationStatus.Canceled: {
+        core.setFailed('Canceled by user')
         break
       }
       case ConfirmationStatus.Timeout: {

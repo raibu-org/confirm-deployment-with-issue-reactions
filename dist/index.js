@@ -48,7 +48,7 @@ const retryInterval = 10 * second;
 var ConfirmationStatus;
 (function (ConfirmationStatus) {
     ConfirmationStatus["Confirmed"] = "confirmed";
-    ConfirmationStatus["Cancelled"] = "cancelled";
+    ConfirmationStatus["Canceled"] = "canceled";
     ConfirmationStatus["Timeout"] = "timeout";
     ConfirmationStatus["Pending"] = "pending";
 })(ConfirmationStatus = exports.ConfirmationStatus || (exports.ConfirmationStatus = {}));
@@ -58,7 +58,7 @@ const getStatusFromIssueReactions = (issues, issueNumber) => __awaiter(void 0, v
         return ConfirmationStatus.Confirmed;
     }
     if (reactions === null || reactions === void 0 ? void 0 : reactions['-1']) {
-        return ConfirmationStatus.Cancelled;
+        return ConfirmationStatus.Canceled;
     }
     return ConfirmationStatus.Pending;
 });
@@ -73,7 +73,7 @@ const getConfirmationStatus = () => __awaiter(void 0, void 0, void 0, function* 
         const confirmationStatus = yield getStatusFromIssueReactions(issues, number);
         (0, utils_1.logConfirmationIssueUrl)(html_url);
         if (confirmationStatus === ConfirmationStatus.Confirmed ||
-            confirmationStatus === ConfirmationStatus.Cancelled) {
+            confirmationStatus === ConfirmationStatus.Canceled) {
             yield (0, issues_1.closeIssue)(issues, number);
             return confirmationStatus;
         }
@@ -195,8 +195,8 @@ const run = () => __awaiter(void 0, void 0, void 0, function* () {
                 core.info('Confirmed by user');
                 break;
             }
-            case get_confirmation_status_1.ConfirmationStatus.Cancelled: {
-                core.setFailed('Cancelled by user');
+            case get_confirmation_status_1.ConfirmationStatus.Canceled: {
+                core.setFailed('Canceled by user');
                 break;
             }
             case get_confirmation_status_1.ConfirmationStatus.Timeout: {
