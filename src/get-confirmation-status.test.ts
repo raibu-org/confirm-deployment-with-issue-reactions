@@ -1,13 +1,11 @@
-import * as core from '@actions/core'
 import * as github from '@actions/github'
 import {Issues, closeIssue, createIssue, getIssueReactions} from './issues'
-import {castToAnyMock, castToMock} from './test/type-utils'
 import getConfirmationStatus, {
   ConfirmationStatus
 } from './get-confirmation-status'
+import {castToAnyMock} from './test/type-utils'
 
 jest.mock('@actions/core')
-const getInputMock = castToMock(core.getInput)
 
 jest.mock('@actions/github')
 const getOctokitMock = castToAnyMock(github.getOctokit)
@@ -18,9 +16,9 @@ const getIssueReactionsMock = castToAnyMock(getIssueReactions)
 
 describe('getConfirmationStatus()', () => {
   const issues = {someIssueStuff: 'ok'} as unknown as Issues
+  const githubToken = 'some-token'
 
   beforeEach(async () => {
-    getInputMock.mockReturnValue('someToken')
     getOctokitMock.mockReturnValue({rest: {issues}})
     createIssueMock.mockResolvedValue({data: {number: 510}})
 
@@ -32,15 +30,11 @@ describe('getConfirmationStatus()', () => {
 
   describe('always', () => {
     beforeEach(async () => {
-      await getConfirmationStatus()
-    })
-
-    it('gets github token from action input', () => {
-      expect(getInputMock).toBeCalledWith('githubToken')
+      await getConfirmationStatus(githubToken)
     })
 
     it('gets octokit with correct token', () => {
-      expect(getOctokitMock).toBeCalledWith('someToken')
+      expect(getOctokitMock).toBeCalledWith(githubToken)
     })
 
     it('tries to create an issue', () => {
@@ -50,7 +44,7 @@ describe('getConfirmationStatus()', () => {
 
   describe('when creating an issue succeeds', () => {
     beforeEach(async () => {
-      await getConfirmationStatus()
+      await getConfirmationStatus(githubToken)
     })
 
     it('tries to poll issue reactions', () => {
@@ -70,7 +64,7 @@ describe('getConfirmationStatus()', () => {
       beforeEach(async () => {
         getIssueReactionsMock.mockResolvedValue(reactions)
 
-        result = await getConfirmationStatus()
+        result = await getConfirmationStatus(githubToken)
       })
 
       it('closes the issue', () => {
@@ -89,7 +83,7 @@ describe('getConfirmationStatus()', () => {
     beforeEach(async () => {
       getIssueReactionsMock.mockResolvedValue({['+1']: 0, ['-1']: 0})
 
-      result = await getConfirmationStatus()
+      result = await getConfirmationStatus(githubToken)
     })
 
     it('returns timeout confirmation status', () => {
@@ -117,7 +111,7 @@ describe('getConfirmationStatus()', () => {
       createIssueMock.mockRejectedValue('Some error')
 
       try {
-        await getConfirmationStatus()
+        await getConfirmationStatus(githubToken)
       } catch (err) {
         error = err
       }

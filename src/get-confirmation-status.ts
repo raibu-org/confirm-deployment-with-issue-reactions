@@ -1,4 +1,3 @@
-import * as core from '@actions/core'
 import * as github from '@actions/github'
 import {Issues, closeIssue, createIssue, getIssueReactions} from './issues'
 import {logConfirmationIssueUrl} from './utils'
@@ -35,9 +34,8 @@ const getStatusFromIssueReactions = async (
 
 const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
-const getConfirmationStatus = async () => {
-  const token = core.getInput('githubToken')
-  const octokit = github.getOctokit(token)
+const getConfirmationStatus = async (githubToken: string) => {
+  const octokit = github.getOctokit(githubToken)
   const {
     rest: {issues}
   } = octokit

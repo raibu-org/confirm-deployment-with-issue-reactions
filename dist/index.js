@@ -36,7 +36,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ConfirmationStatus = void 0;
-const core = __importStar(__nccwpck_require__(2186));
 const github = __importStar(__nccwpck_require__(5438));
 const issues_1 = __nccwpck_require__(6962);
 const utils_1 = __nccwpck_require__(918);
@@ -63,9 +62,8 @@ const getStatusFromIssueReactions = (issues, issueNumber) => __awaiter(void 0, v
     return ConfirmationStatus.Pending;
 });
 const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-const getConfirmationStatus = () => __awaiter(void 0, void 0, void 0, function* () {
-    const token = core.getInput('githubToken');
-    const octokit = github.getOctokit(token);
+const getConfirmationStatus = (githubToken) => __awaiter(void 0, void 0, void 0, function* () {
+    const octokit = github.getOctokit(githubToken);
     const { rest: { issues } } = octokit;
     const { data: { number, html_url } } = yield (0, issues_1.createIssue)(issues);
     for (let i = 0; i < timeout / retryInterval; i++) {
@@ -187,9 +185,15 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.run = void 0;
 const core = __importStar(__nccwpck_require__(2186));
 const get_confirmation_status_1 = __importStar(__nccwpck_require__(8430));
+const messages_1 = __nccwpck_require__(9112);
 const run = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const confirmationStatus = yield (0, get_confirmation_status_1.default)();
+        const githubToken = core.getInput('githubToken');
+        if (!githubToken) {
+            core.setFailed((0, messages_1.missingGithubTokenMessage)());
+            return;
+        }
+        const confirmationStatus = yield (0, get_confirmation_status_1.default)(githubToken);
         switch (confirmationStatus) {
             case get_confirmation_status_1.ConfirmationStatus.Confirmed: {
                 core.info('Confirmed by user');
@@ -206,11 +210,30 @@ const run = () => __awaiter(void 0, void 0, void 0, function* () {
         }
     }
     catch (error) {
+        console.log(error);
         core.setFailed('Unknown error');
     }
 });
 exports.run = run;
 (0, exports.run)();
+
+
+/***/ }),
+
+/***/ 9112:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.missingGithubTokenMessage = void 0;
+const missingGithubTokenMessage = () => `GitHub token is required, please provide token in the action input, example usage:
+steps:
+- uses: humanizmu/confirm-deployment-with-issue-reactions@some-version
+  with:
+    githubToken: \${{ secrets.GITHUB_TOKEN }}
+`;
+exports.missingGithubTokenMessage = missingGithubTokenMessage;
 
 
 /***/ }),

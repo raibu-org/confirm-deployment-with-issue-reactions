@@ -2,10 +2,18 @@ import * as core from '@actions/core'
 import getConfirmationStatus, {
   ConfirmationStatus
 } from './get-confirmation-status'
+import {missingGithubTokenMessage} from './messages'
 
 export const run = async (): Promise<void> => {
   try {
-    const confirmationStatus = await getConfirmationStatus()
+    const githubToken = core.getInput('githubToken')
+
+    if (!githubToken) {
+      core.setFailed(missingGithubTokenMessage())
+      return
+    }
+
+    const confirmationStatus = await getConfirmationStatus(githubToken)
 
     switch (confirmationStatus) {
       case ConfirmationStatus.Confirmed: {
@@ -22,6 +30,7 @@ export const run = async (): Promise<void> => {
       }
     }
   } catch (error) {
+    console.log(error)
     core.setFailed('Unknown error')
   }
 }
