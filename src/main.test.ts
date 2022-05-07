@@ -3,7 +3,7 @@ import getConfirmationStatus, {
   ConfirmationStatus
 } from './get-confirmation-status'
 import {castToMock} from './test/type-utils'
-import {missingGithubTokenMessage} from './messages'
+import {getMissingGithubTokenMessage} from './messages'
 import {run} from './main'
 
 jest.mock('@actions/core')
@@ -37,7 +37,7 @@ describe('main', () => {
       })
 
       it('fails the action with correct error message', () => {
-        expect(core.setFailed).toBeCalledWith(missingGithubTokenMessage())
+        expect(core.setFailed).toBeCalledWith(getMissingGithubTokenMessage())
       })
 
       it('does not call getConfirmationStatus', () => {

@@ -1,11 +1,14 @@
+import * as core from '@actions/core'
 import * as github from '@actions/github'
 import {Issues, closeIssue, createIssue, getIssueReactions} from './issues'
+import {castToAnyMock, castToMock} from './test/type-utils'
 import getConfirmationStatus, {
   ConfirmationStatus
 } from './get-confirmation-status'
-import {castToAnyMock} from './test/type-utils'
+import {getIssueUrlMessage} from './messages'
 
 jest.mock('@actions/core')
+const coreInfoMock = castToMock(core.info)
 
 jest.mock('@actions/github')
 const getOctokitMock = castToAnyMock(github.getOctokit)
@@ -20,7 +23,9 @@ describe('getConfirmationStatus()', () => {
 
   beforeEach(async () => {
     getOctokitMock.mockReturnValue({rest: {issues}})
-    createIssueMock.mockResolvedValue({data: {number: 510}})
+    createIssueMock.mockResolvedValue({
+      data: {number: 510, html_url: 'http://some-issue-url'}
+    })
 
     jest.spyOn(global, 'setTimeout').mockImplementation(fn => {
       fn()
@@ -45,6 +50,12 @@ describe('getConfirmationStatus()', () => {
   describe('when creating an issue succeeds', () => {
     beforeEach(async () => {
       await getConfirmationStatus(githubToken)
+    })
+
+    it('logs link to the issue in CI console', () => {
+      expect(coreInfoMock).toBeCalledWith(
+        getIssueUrlMessage('http://some-issue-url')
+      )
     })
 
     it('tries to poll issue reactions', () => {

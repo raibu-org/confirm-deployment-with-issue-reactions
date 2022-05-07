@@ -2,14 +2,14 @@ import * as core from '@actions/core'
 import getConfirmationStatus, {
   ConfirmationStatus
 } from './get-confirmation-status'
-import {missingGithubTokenMessage} from './messages'
+import {getMissingGithubTokenMessage} from './messages'
 
 export const run = async (): Promise<void> => {
   try {
     const githubToken = core.getInput('githubToken')
 
     if (!githubToken) {
-      core.setFailed(missingGithubTokenMessage())
+      core.setFailed(getMissingGithubTokenMessage())
       return
     }
 
@@ -30,7 +30,6 @@ export const run = async (): Promise<void> => {
       }
     }
   } catch (error) {
-    console.log(error)
     core.setFailed('Unknown error')
   }
 }

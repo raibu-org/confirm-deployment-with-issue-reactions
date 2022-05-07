@@ -36,9 +36,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ConfirmationStatus = void 0;
+const core = __importStar(__nccwpck_require__(2186));
 const github = __importStar(__nccwpck_require__(5438));
 const issues_1 = __nccwpck_require__(6962);
-const utils_1 = __nccwpck_require__(918);
+const messages_1 = __nccwpck_require__(9112);
 const second = 1000;
 const minute = 60 * 1000;
 const timeout = 20 * minute;
@@ -69,7 +70,7 @@ const getConfirmationStatus = (githubToken) => __awaiter(void 0, void 0, void 0,
     for (let i = 0; i < timeout / retryInterval; i++) {
         yield wait(retryInterval);
         const confirmationStatus = yield getStatusFromIssueReactions(issues, number);
-        (0, utils_1.logConfirmationIssueUrl)(html_url);
+        core.info((0, messages_1.getIssueUrlMessage)(html_url));
         if (confirmationStatus === ConfirmationStatus.Confirmed ||
             confirmationStatus === ConfirmationStatus.Canceled) {
             yield (0, issues_1.closeIssue)(issues, number);
@@ -190,7 +191,7 @@ const run = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const githubToken = core.getInput('githubToken');
         if (!githubToken) {
-            core.setFailed((0, messages_1.missingGithubTokenMessage)());
+            core.setFailed((0, messages_1.getMissingGithubTokenMessage)());
             return;
         }
         const confirmationStatus = yield (0, get_confirmation_status_1.default)(githubToken);
@@ -210,7 +211,6 @@ const run = () => __awaiter(void 0, void 0, void 0, function* () {
         }
     }
     catch (error) {
-        console.log(error);
         core.setFailed('Unknown error');
     }
 });
@@ -226,51 +226,19 @@ exports.run = run;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.missingGithubTokenMessage = void 0;
-const missingGithubTokenMessage = () => `GitHub token is required, please provide token in the action input, example usage:
+exports.getIssueUrlMessage = exports.getMissingGithubTokenMessage = void 0;
+const getMissingGithubTokenMessage = () => `GitHub token is required, please provide token in the action input, example usage:
 steps:
 - uses: humanizmu/confirm-deployment-with-issue-reactions@some-version
   with:
     githubToken: \${{ secrets.GITHUB_TOKEN }}
 `;
-exports.missingGithubTokenMessage = missingGithubTokenMessage;
-
-
-/***/ }),
-
-/***/ 918:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
-
-"use strict";
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.logConfirmationIssueUrl = void 0;
-const core = __importStar(__nccwpck_require__(2186));
-const logConfirmationIssueUrl = (issueUrl) => {
-    core.info(`Opened issue ${issueUrl}`);
-    core.info(`Confirm this step by reacting to the issue with 👍`);
-    core.info('To cancel this step react to the issue with 👎');
-};
-exports.logConfirmationIssueUrl = logConfirmationIssueUrl;
+exports.getMissingGithubTokenMessage = getMissingGithubTokenMessage;
+const getIssueUrlMessage = (issueUrl) => `Opened issue ${issueUrl}
+Confirm this step by reacting to the issue with 👍
+To cancel this step react to the issue with 👎
+`;
+exports.getIssueUrlMessage = getIssueUrlMessage;
 
 
 /***/ }),

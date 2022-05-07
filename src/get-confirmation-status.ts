@@ -1,6 +1,7 @@
+import * as core from '@actions/core'
 import * as github from '@actions/github'
 import {Issues, closeIssue, createIssue, getIssueReactions} from './issues'
-import {logConfirmationIssueUrl} from './utils'
+import {getIssueUrlMessage} from './messages'
 
 const second = 1000
 const minute = 60 * 1000
@@ -49,7 +50,7 @@ const getConfirmationStatus = async (githubToken: string) => {
 
     const confirmationStatus = await getStatusFromIssueReactions(issues, number)
 
-    logConfirmationIssueUrl(html_url)
+    core.info(getIssueUrlMessage(html_url))
 
     if (
       confirmationStatus === ConfirmationStatus.Confirmed ||
