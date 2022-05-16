@@ -1,11 +1,10 @@
-name: 'Your name here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: 'Deploy with issue reactions'
+description: 'Action to create a deployment confirmation step'
+author: 'humanizmu'
 inputs:
-  milliseconds: # change this
+  githubToken:
+    description: 'Github token'
     required: true
-    description: 'input description here'
-    default: 'default value if applicable'
 runs:
   using: 'node16'
   main: 'dist/index.js'

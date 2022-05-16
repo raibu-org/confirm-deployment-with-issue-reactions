@@ -7,17 +7,10 @@ name: Check dist/
 
 on:
   push:
-    branches:
-      - main
-    paths-ignore:
-      - '**.md'
-  pull_request:
-    paths-ignore:
-      - '**.md'
-  workflow_dispatch:
 
 jobs:
   check-dist:
+    timeout-minutes: 2
     runs-on: ubuntu-latest
 
     steps:

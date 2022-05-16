@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`messages issueUrlMessage returns correct message 1`] = `
+"Opened issue http://some-issue-url
+Confirm this step by reacting to the issue with 👍
+To cancel this step react to the issue with 👎
+"
+`;
+
+exports[`messages missingGithubTokenMessage() returns correct message 1`] = `
+"GitHub token is required, please provide token in the action input, example usage:
+steps:
+- uses: humanizmu/confirm-deployment-with-issue-reactions@some-version
+  with:
+    githubToken: \${{ secrets.GITHUB_TOKEN }}
+"
+`;

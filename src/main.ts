@@ -1,18 +1,36 @@
 import * as core from '@actions/core'
-import {wait} from './wait'
+import getConfirmationStatus, {
+  ConfirmationStatus
+} from './get-confirmation-status'
+import {getMissingGithubTokenMessage} from './messages'
 
-async function run(): Promise<void> {
+export const run = async (): Promise<void> => {
   try {
-    const ms: string = core.getInput('milliseconds')
-    core.debug(`Waiting ${ms} milliseconds ...`) // debug is only output if you set the secret `ACTIONS_STEP_DEBUG` to true
+    const githubToken = core.getInput('githubToken')
 
-    core.debug(new Date().toTimeString())
-    await wait(parseInt(ms, 10))
-    core.debug(new Date().toTimeString())
+    if (!githubToken) {
+      core.setFailed(getMissingGithubTokenMessage())
+      return
+    }
 
-    core.setOutput('time', new Date().toTimeString())
+    const confirmationStatus = await getConfirmationStatus(githubToken)
+
+    switch (confirmationStatus) {
+      case ConfirmationStatus.Confirmed: {
+        core.info('Confirmed by user')
+        break
+      }
+      case ConfirmationStatus.Canceled: {
+        core.setFailed('Canceled by user')
+        break
+      }
+      case ConfirmationStatus.Timeout: {
+        core.setFailed('Canceled due to timeout')
+        break
+      }
+    }
   } catch (error) {
-    if (error instanceof Error) core.setFailed(error.message)
+    core.setFailed('Unknown error')
   }
 }
 

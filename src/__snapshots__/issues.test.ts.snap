@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`issues createIssue() makes a correct call to create issue endpoint 1`] = `
+Object {
+  "body": "The confirmation step has been requested by run http://putin.huilo/actions/runs/some-run-id
+
+Related commit 1234567
+
+To confirm this step react to this issue with 👍
+To cancel this step react to the issue with 👎",
+  "someRepoData": "putin huilo",
+  "title": "🌺 Confirm deployment of 1234567",
+}
+`;
